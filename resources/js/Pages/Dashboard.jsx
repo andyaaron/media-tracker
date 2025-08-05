@@ -47,10 +47,17 @@ export default function Dashboard() {
                         <input type={"text"} placeholder={"Search for a movie... "} onChange={handleChange}/>
                         <button onClick={handleClick}>Submit</button>
 
-                        <div className={"search-results"}>
+                        <div className={"search-results flex flex-col"}>
                             {movies?.length > 1 && (
                                 movies.map(movie => (
-                                        <div>{movie["title"]}</div>
+                                        <div className={"movie-card border rounded-lg flex flex-row gap-5 p-8 m-4"}>
+                                            <img alt="movie poster" className={"w-32 h-48"} src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} />
+                                            <div className={"basis-2/3"}>
+                                                <h2>{movie["title"]}</h2>
+                                                <h3>{movie.release_date}</h3>
+                                                <p>{movie.overview}</p>
+                                            </div>
+                                        </div>
                                 ))
                             )}
                         </div>
