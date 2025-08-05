@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+
 class MovieController extends Controller
 {
     private $base_url;
@@ -17,6 +19,7 @@ class MovieController extends Controller
     }
     // handle the GET /search/movies request
     public function search(Request $request) {
+        Log::debug("Initiating search!");
         // get query param from request
         $query = $request->query('query');
 
@@ -25,7 +28,7 @@ class MovieController extends Controller
             return response()->json(['error' => 'Query parameters missing'], 400);
         }
 
-        $response = Http::get("$this->base_url/search/movie", [
+        $response = Http::withToken($this->api_token)->get("$this->base_url/search/movie", [
             'api_key'   => $this->api_key,
             'query'     => $query,
         ]);
@@ -35,7 +38,11 @@ class MovieController extends Controller
             return $response->json();
         } else {
             // log error
-            return response()->json(['error' => 'Failed to retrieve movies from TMDb'], $response->status());
+            return response()->json([
+                'status_code' => $response['status_code'],
+                'status_message' => $response["status_message"],
+                'error' => 'Failed to retrieve movies from TMDb'
+            ], $response->status());
         }
     }
 
