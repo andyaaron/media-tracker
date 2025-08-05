@@ -41,12 +41,10 @@ export default function Dashboard() {
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">
-                            You're logged in!
+                        <div className={"flex flex-row justify-center items-center"}>
+                            <input className="m-4" type={"text"} placeholder={"Search for a movie... "} onChange={handleChange}/>
+                            <button className={"border p-1 rounded-lg bg-blue-500 text-white font-bold"} onClick={handleClick}>Submit</button>
                         </div>
-                        <input type={"text"} placeholder={"Search for a movie... "} onChange={handleChange}/>
-                        <button onClick={handleClick}>Submit</button>
-
                         <div className={"search-results flex flex-col"}>
                             {movies?.length > 1 && (
                                 movies.map(movie => (
