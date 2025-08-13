@@ -1,6 +1,9 @@
 import {useState} from "react";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
+import Heart from '/resources/icons/heart-regular-full.svg?react';
+import Plus from '/resources/icons/plus-solid-full.svg?react';
+import Check from '/resources/icons/check-solid-full.svg?react';
 
 export default function Dashboard() {
     const [query, setQuery] = useState('');
@@ -48,12 +51,16 @@ export default function Dashboard() {
                         <div className={"search-results flex flex-col"}>
                             {movies?.length > 1 && (
                                 movies.map(movie => (
-                                        <div className={"movie-card border rounded-lg flex flex-row gap-5 p-8 m-4"}>
+                                        <div key={movie.id} className={"movie-card border rounded-lg flex flex-row gap-5 p-8 m-4"}>
                                             <img alt="movie poster" className={"w-32 h-48"} src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} />
                                             <div className={"basis-2/3"}>
                                                 <h2>{movie["title"]}</h2>
                                                 <h3>{movie.release_date}</h3>
                                                 <p>{movie.overview}</p>
+                                                <div className={"interact flex"}>
+                                                    <a href={"#"}><Heart className={"w-6 h-6 icon heart"}/></a>
+                                                    <a href={"#"}><Plus className={"w-6 h-6 icon plus"}/></a>
+                                                </div>
                                             </div>
                                         </div>
                                 ))

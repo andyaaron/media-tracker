@@ -32,11 +32,37 @@ class MovieController extends Controller
         if ($response["success"] === true) {
             $request_token = $response["request_token"];
 
-            $redirect_url = "https://www.themoviedb.org/authenticate/$request_token?redirect_to=$this->app_url#success";
-            return redirect()->away($redirect_url);
+            $redirect_to_url = route('tmdb.callback');
+
+            $redirect_url = "https://www.themoviedb.org/authenticate/$request_token?redirect_to=" . urlencode($redirect_to_url);
+            return redirect($redirect_url);
         }
 
         return response()->json(['error' => 'Failed to get request token.'], 500);
+    }
+
+    public function callback(Request $request) {
+        $request_token = $request->query('request_token');
+
+        if ($request_token) {
+            $response = Http::withToken($this->api_token)
+                ->post("$this->base_url/authentication/session/new", [
+                    'request_token' => $request_token,
+                ]);
+
+            if ($response["success"] === true) {
+                $session_id = $response["session_id"];
+
+                $user = auth()->user();
+                Log::debug("user: $user");
+                if ($user) {
+                    $user->tmdb_session_id = $session_id;
+                    $user->save();
+                }
+
+                return redirect('/dashboard')->with('status', 'TMDB account linked successfully');
+            }
+        }
     }
 
     // handle the GET /search/movies request
@@ -92,6 +118,16 @@ class MovieController extends Controller
                 'error'             => 'Failed to retrieve list from TMDb'
             ]);
         }
+    }
+
+    // add a movie as a favourite
+    public function favourite(Request $request) {
+
+    }
+
+    // Get the public details of a TMDB account
+    public function userDetails(Request $request) {
+
     }
 
     // post data

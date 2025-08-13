@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MovieController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -17,6 +18,12 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+// authorize request token to begin process of saving user info
+Route::get('/authorize', [MovieController::class, 'authorize'])->name('tmdb.authorize');
+
+// callback route to generate session ID after authorizing request token
+Route::get('/tmdb-callback', [MovieController::class, 'callback'])->name('tmdb.callback');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
