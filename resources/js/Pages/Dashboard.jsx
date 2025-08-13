@@ -11,7 +11,7 @@ export default function Dashboard() {
 
     const search = async () => {
         try {
-            const response = await fetch('/api/search/movies?' + new URLSearchParams({ query: query }))
+            const response = await fetch('/api/search/multi?' + new URLSearchParams({ query: query }))
                 .then(response => response.json())
             if (response.results) {
                 setMovies(response.results);
@@ -30,7 +30,6 @@ export default function Dashboard() {
         await search(query)
     }
 
-    console.log(movies)
     return (
         <AuthenticatedLayout
             header={

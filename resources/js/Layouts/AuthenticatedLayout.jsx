@@ -7,9 +7,16 @@ import { useState } from 'react';
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
-
+    const { auth } = usePage().props;
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
+
+    const authenticateUserLink = auth.tmdb_is_authenticated ? (
+        <a className="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium leading-5 transition duration-150 ease-in-out focus:outline-none border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 focus:border-gray-300 focus:text-gray-700"
+           href={route('tmdb.authorize')}>
+            Authenticate With TMDB
+        </a>
+    ) : null;
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -30,10 +37,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                 >
                                     Dashboard
                                 </NavLink>
-                                <a className="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium leading-5 transition duration-150 ease-in-out focus:outline-none border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 focus:border-gray-300 focus:text-gray-700"
-                                   href={route('tmdb.authorize')}>
-                                    Authenticate With TMDB
-                                </a>
+                                {authenticateUserLink}
                             </div>
                         </div>
 

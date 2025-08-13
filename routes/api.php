@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MovieController;
 
 // Public route for searching movies
-Route::get('/search/movies', [MovieController::class, 'search']);
+Route::get('/search/multi', [MovieController::class, 'search']);
 Route::get('/authorize', [MovieController::class, 'authorize']);
 
 // Protected routes for managing a user's list

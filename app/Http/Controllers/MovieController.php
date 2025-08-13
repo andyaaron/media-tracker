@@ -41,6 +41,7 @@ class MovieController extends Controller
         return response()->json(['error' => 'Failed to get request token.'], 500);
     }
 
+    // callback method after authorizing user, set session ID
     public function callback(Request $request) {
         $request_token = $request->query('request_token');
 
@@ -51,6 +52,8 @@ class MovieController extends Controller
                 ]);
 
             if ($response["success"] === true) {
+                // @TODO: Move this logic to our User model.
+                // we should be able to then call auth()->user()->linkTmdbAccount($sessionId)
                 $session_id = $response["session_id"];
 
                 $user = auth()->user();
@@ -58,10 +61,29 @@ class MovieController extends Controller
                 if ($user) {
                     $user->tmdb_session_id = $session_id;
                     $user->save();
+
+                    // get account details
+                    $this->account_details($user, $session_id);
                 }
 
                 return redirect('/dashboard')->with('status', 'TMDB account linked successfully');
             }
+        }
+    }
+
+    // with a user session id, we can get user details like username, account id, etc.
+    public function account_details($user, $session_id) {
+        Log::debug("user: $user");
+        Log::debug("user session id: $session_id");
+
+        $response = Http::withToken($this->api_token)
+            ->get("$this->base_url/account?session_id=$session_id");
+
+        if ($response->successful() && $response["id"]) {
+            Log::debug("account details: $response");
+            $user->tmdb_account_id = $response["id"];
+            $user->tmdb_username = $response["username"];
+            $user->save();
         }
     }
 
@@ -77,7 +99,7 @@ class MovieController extends Controller
         }
 
         $response = Http::withToken($this->api_token)
-            ->get("$this->base_url/search/movie", [
+            ->get("$this->base_url/search/multi", [
             'query'     => $query,
         ]);
 
