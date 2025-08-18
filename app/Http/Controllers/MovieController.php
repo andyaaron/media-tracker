@@ -144,12 +144,51 @@ class MovieController extends Controller
 
     // add a movie as a favourite
     public function favourite(Request $request) {
+        $account_id = $request->query('account_id');
 
+        // Make sure the account_id is present
+        if (!$account_id) {
+            return response()->json([
+                'status_code' => 400,
+                'status_message' => 'Bad Request',
+                'error' => 'Account ID is missing!'
+            ], 400);
+        }
+
+        $response = Http::withToken($this->api_token)
+            ->post("$this->base_url/account/$account_id/favorite", [
+                'media_id' => $request->input('media_id'),
+                'media_type' => $request->input('media_type'),
+                'favorite' => $request->input('favorite'),
+                'account_id' => $account_id
+            ]);
+
+        if ($response->successful()) {
+            return $response->json();
+        } else {
+            return response()->json([
+                'status_code'   => $response['status_code'],
+                'status_message'    => $response["status_message"],
+                'error'           => 'Failed to favorite selected media!'
+            ], $response->status());
+        }
     }
 
-    // Get the public details of a TMDB account
-    public function userDetails(Request $request) {
+    public function favourite_movies(Request $request) {
+        $account_id = $request->query('account_id');
 
+        $response = Http::withToken($this->api_token)
+            ->get("$this->base_url/account/$account_id/favorite/movies");
+
+        if ($response->successful()) {
+            return $response->json();
+        } else {
+            return response()->json([
+                'status_code'       => $response['status_code'],
+                'status_message'    => $response["status_message"],
+                'error'             => 'Failed to get favorite movies!'
+            ]);
+        }
     }
 
     // post data

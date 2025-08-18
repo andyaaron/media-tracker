@@ -5,6 +5,8 @@ use App\Http\Controllers\MovieController;
 
 // Public route for searching movies
 Route::get('/search/multi', [MovieController::class, 'search']);
+Route::post('/favourite', [MovieController::class, 'favourite']);
+Route::get('/favourite_movies', [MovieController::class, 'favourite_movies']);
 Route::get('/authorize', [MovieController::class, 'authorize']);
 
 // Protected routes for managing a user's list
