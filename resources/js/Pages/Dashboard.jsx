@@ -1,33 +1,47 @@
-import {useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
-import Heart from '/resources/icons/heart-regular-full.svg?react';
-import Plus from '/resources/icons/plus-solid-full.svg?react';
+import {Head, usePage} from '@inertiajs/react';
 import Check from '/resources/icons/check-solid-full.svg?react';
+import UserContext from "@/context/UserContext.jsx";
+import {useCustomJiti} from "tailwindcss/src/lib/load-config.js";
+import {Card} from "@/Components/Card.jsx";
+import {favourite, getFavourites, search} from "@/Api/movies.jsx";
+
+
+export const ErrorHandler = ({error, status_code, status_message}) => (
+    <div className={"error-container text-white bg-red-400 m-2 p-2 rounded-md text-center"}>
+        <p>{error}</p>
+        <p>status code: {status_code}</p>
+        <p>status message: {status_message}</p>
+    </div>
+)
 
 export default function Dashboard() {
+    // state
     const [query, setQuery] = useState('');
-    const [movies, setMovies] = useState([]);
+    const [mediaList, setMediaList] = useState([]);
+    const [error, setError] = useState(null);
+    const [favourites, setFavourites] = useState([]);
 
-    const search = async () => {
-        try {
-            const response = await fetch('/api/search/multi?' + new URLSearchParams({ query: query }))
-                .then(response => response.json())
-            if (response.results) {
-                setMovies(response.results);
-            }
-        } catch (error) {
-            console.error("Error fetching movies:", error);
-            setMovies([])
+    // vars
+    const { tmdb_account_id } = usePage().props.auth.user
+
+    useEffect(() => {
+        const fetchFavourites = async () => {
+            const results = await getFavourites(tmdb_account_id);
+            console.log("results: ", results);
+            setFavourites(results)
         }
-    }
+        fetchFavourites();
+    }, []);
 
     const handleChange = (e) => {
         setQuery(e.target.value);
     }
 
     const handleClick = async () => {
-        await search(query)
+        const searchResults = await search(query, favourites)
+        setMediaList(searchResults)
     }
 
     return (
@@ -42,26 +56,17 @@ export default function Dashboard() {
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                    {error && <ErrorHandler {...error} />}
+
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className={"flex flex-row justify-center items-center"}>
                             <input className="m-4" type={"text"} placeholder={"Search for a movie... "} onChange={handleChange}/>
                             <button className={"border p-1 rounded-lg bg-blue-500 text-white font-bold"} onClick={handleClick}>Submit</button>
                         </div>
                         <div className={"search-results flex flex-col"}>
-                            {movies?.length > 1 && (
-                                movies.map(movie => (
-                                        <div key={movie.id} className={"movie-card border rounded-lg flex flex-row gap-5 p-8 m-4"}>
-                                            <img alt="movie poster" className={"w-32 h-48"} src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} />
-                                            <div className={"basis-2/3"}>
-                                                <h2>{movie["title"]}</h2>
-                                                <h3>{movie.release_date}</h3>
-                                                <p>{movie.overview}</p>
-                                                <div className={"interact flex"}>
-                                                    <a href={"#"}><Heart className={"w-6 h-6 icon heart"}/></a>
-                                                    <a href={"#"}><Plus className={"w-6 h-6 icon plus"}/></a>
-                                                </div>
-                                            </div>
-                                        </div>
+                            {mediaList?.length > 1 && (
+                                mediaList.map(media => (
+                                    <Card media={media} key={media.id} tmdb_account_id={tmdb_account_id} />
                                 ))
                             )}
                         </div>
