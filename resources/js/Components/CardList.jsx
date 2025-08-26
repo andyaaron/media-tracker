@@ -18,7 +18,7 @@ export const CardList = ({renderFavourites = false}) => {
 
     useEffect(() => {
         const fetchFavourites = async () => {
-            const results = await getFavourites(tmdb_account_id);
+            const results = await getFavourites(tmdb_account_id, favourites);
             setFavourites(results)
         }
         fetchFavourites();

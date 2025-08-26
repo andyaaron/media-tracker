@@ -28,21 +28,17 @@ export const favourite = async (media, tmdb_account_id) => {
     }
 }
 
-export const getFavourites = async (tmdb_account_id) => {
+export const getFavourites = async (tmdb_account_id, favourites) => {
     const searchParams = new URLSearchParams({
         account_id: tmdb_account_id
     })
     try {
-        const response = await fetch(`/api/favourite_movies?${searchParams}`);
-        const data = await response.json();
+        const response = await fetch(`/api/favourite_movies?${searchParams}`)
+            .then(response => response.json())
 
-        if (!response.ok) {
-            throw data;
+        if (response.results) {
+            return hasUserLikedMedia(response.results, favourites)
         }
-
-        return data.results
-
-        console.log("getFavourites data: ", data);
     } catch (error) {
         console.error("Error getting favourite movies: ", error);
         return error
