@@ -9,7 +9,6 @@ const UserProvider = (props) => {
     const [mediaList, setMediaList] = useState([]);
 
     const { tmdb_account_id } = props
-    console.log("tmdb_account_id: ", tmdb_account_id);
 
     const handleFavourite = async (media) => {
         console.log("test test testtttt")
@@ -17,8 +16,6 @@ const UserProvider = (props) => {
         console.log("data: ", data);
         setFavourites(prevFavourites => [...prevFavourites, data]);
     }
-
-    console.log("favourites: ", favourites);
 
     const handleSetFavourites = (value) => {
         setFavourites(value)

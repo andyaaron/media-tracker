@@ -29,7 +29,6 @@ export default function Dashboard() {
         handleSetFavourites,
         handleSearch,
     } = useContext(userContext)
-    console.log("favourites: ", favourites);
 
     // vars
 
