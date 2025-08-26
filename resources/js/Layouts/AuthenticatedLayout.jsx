@@ -4,7 +4,7 @@ import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage } from '@inertiajs/react';
 import { useState} from 'react'
-import UserContext from "/resources/js/context/UserContext";
+import UserContext, {UserProvider} from "/resources/js/context/UserContext";
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
@@ -19,8 +19,14 @@ export default function AuthenticatedLayout({ header, children }) {
         </a>
     ) : null;
 
+    // vars
+    const { tmdb_account_id } = usePage().props.auth.user;
+    const pageProps = {
+        tmdb_account_id
+    };
+
     return (
-        <UserContext.Provider value={user}>
+        <UserProvider {...pageProps}>
             <div className="min-h-screen bg-gray-100">
                 <nav className="border-b border-gray-100 bg-white">
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -182,6 +188,6 @@ export default function AuthenticatedLayout({ header, children }) {
 
                 <main>{children}</main>
             </div>
-        </UserContext.Provider>
+        </UserProvider>
     );
 }

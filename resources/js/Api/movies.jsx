@@ -1,5 +1,3 @@
-import {usePage} from "@inertiajs/react";
-
 export const favourite = async (media, tmdb_account_id) => {
     console.log("media: ", media)
     // setError(null)
@@ -20,6 +18,7 @@ export const favourite = async (media, tmdb_account_id) => {
         }
         console.log("favourite data: ", data)
 
+        return data;
         // @TODO: update the local state immediately when favouriting
         // setFavourites(prevFavourites => [...prevFavourites, newFavourite])
 
@@ -46,11 +45,12 @@ export const getFavourites = async (tmdb_account_id) => {
         console.log("getFavourites data: ", data);
     } catch (error) {
         console.error("Error getting favourite movies: ", error);
-        setError(error)
+        return error
     }
 }
 
 export const search = async (query, favourites) => {
+
     try {
         const response = await fetch('/api/search/multi?' + new URLSearchParams({ query: query }))
             .then(response => response.json())
@@ -65,8 +65,6 @@ export const search = async (query, favourites) => {
 }
 
 const hasUserLikedMedia = (list, favourites) => {
-    console.log("list: ", list);
-    console.log("favourites: ", favourites);
     const favouriteIds = new Set(favourites.map(item => item.id));
 
     return list.map(mediaItem => {
