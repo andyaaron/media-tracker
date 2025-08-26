@@ -4,7 +4,7 @@ import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage } from '@inertiajs/react';
 import { useState} from 'react'
-import UserContext, {UserProvider} from "/resources/js/context/UserContext";
+import {UserProvider} from "/resources/js/context/UserContext";
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
@@ -44,6 +44,12 @@ export default function AuthenticatedLayout({ header, children }) {
                                         active={route().current('dashboard')}
                                     >
                                         Dashboard
+                                    </NavLink>
+                                    <NavLink
+                                        href={route('favourites')}
+                                        active={route().current('favourites')}
+                                    >
+                                        Favourites
                                     </NavLink>
                                     {authenticateUserLink}
                                 </div>

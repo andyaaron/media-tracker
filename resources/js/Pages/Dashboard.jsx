@@ -1,12 +1,8 @@
-import {useContext, useEffect, useState} from "react";
+import {useState} from "react";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import {Head, usePage} from '@inertiajs/react';
-import Check from '/resources/icons/check-solid-full.svg?react';
-import UserContext, {UserProvider} from "@/context/UserContext.jsx";
 import {useCustomJiti} from "tailwindcss/src/lib/load-config.js";
 import {CardList} from "@/Components/CardList.jsx";
-import {favourite, getFavourites, search} from "@/Api/movies.jsx";
-import userContext from "@/context/UserContext.jsx";
 import {Search} from "@/Components/Search.jsx";
 
 
@@ -20,17 +16,7 @@ export const ErrorHandler = ({error, status_code, status_message}) => (
 
 export default function Dashboard() {
     // state
-    const [mediaList, setMediaList] = useState([]);
     const [error, setError] = useState(null);
-
-    const {
-        favourites,
-        setFavourites,
-        handleSetFavourites,
-        handleSearch,
-    } = useContext(userContext)
-
-    // vars
 
     return (
         <AuthenticatedLayout
@@ -48,7 +34,7 @@ export default function Dashboard() {
 
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <Search />
-                        <CardList />
+                        <CardList renderFavourites={false} />
                     </div>
                 </div>
             </div>

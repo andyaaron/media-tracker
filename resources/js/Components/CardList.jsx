@@ -1,25 +1,35 @@
 import HeartSolid from "../../icons/heart-solid-full.svg?react";
 import Heart from "../../icons/heart-regular-full.svg?react";
 import Plus from "../../icons/plus-solid-full.svg?react";
-import {favourite, getFavourites} from "@/Api/movies.jsx";
+import {getFavourites} from "@/Api/movies.jsx";
 import UserContext from "@/context/UserContext.jsx";
-import {useContext, useEffect} from "react";
+import {useContext, useEffect, useState} from "react";
 import {usePage} from "@inertiajs/react";
 
-export const CardList = () => {
-    const { handleFavourite, setFavourites, mediaList } = useContext(UserContext);
-    const { tmdb_account_id } = usePage().props.auth.user;
+export const CardList = ({renderFavourites = false}) => {
+    const [mediaList, setMediaList] = useState([]);
 
-    console.log("mediaList: ", mediaList);
+    const {
+        handleFavourite,
+        favourites,
+        setFavourites,
+    } = useContext(UserContext);
+    const { tmdb_account_id } = usePage().props.auth.user;
 
     useEffect(() => {
         const fetchFavourites = async () => {
             const results = await getFavourites(tmdb_account_id);
-            console.log("results: ", results);
             setFavourites(results)
         }
         fetchFavourites();
     }, []);
+
+
+    useEffect(() => {
+        renderFavourites && setMediaList(favourites);
+    }, [renderFavourites, favourites]);
+
+
 
     return (
         <div className={"search-results flex flex-col"}>

@@ -19,6 +19,10 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/favourites', function () {
+    return Inertia::render('Favourites');
+})->middleware(['auth', 'verified'])->name('favourites');
+
 // authorize request token to begin process of saving user info
 Route::get('/authorize', [MovieController::class, 'authorize'])->name('tmdb.authorize');
 

@@ -1,12 +1,10 @@
 import {createContext, useState} from "react";
-import {usePage} from "@inertiajs/react";
 import {favourite, search} from "@/Api/movies.jsx";
 
 const UserContext = createContext({});
 
 const UserProvider = (props) => {
     const [favourites, setFavourites] = useState([])
-    const [mediaList, setMediaList] = useState([]);
 
     const { tmdb_account_id } = props
 
@@ -21,9 +19,6 @@ const UserProvider = (props) => {
         setFavourites(value)
     }
 
-    const handleMediaList = (list) => {
-        setMediaList(list);
-    }
 
     return <UserContext.Provider {...props} value={{
         tmdb_account_id,
@@ -31,9 +26,6 @@ const UserProvider = (props) => {
         handleSetFavourites,
         favourites,
         setFavourites,
-        handleMediaList,
-        mediaList,
-
     }} />
 }
 
