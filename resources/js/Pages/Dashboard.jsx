@@ -5,7 +5,6 @@ import {useCustomJiti} from "tailwindcss/src/lib/load-config.js";
 import {CardList} from "@/Components/CardList.jsx";
 import {Search} from "@/Components/Search.jsx";
 
-
 export const ErrorHandler = ({error, status_code, status_message}) => (
     <div className={"error-container text-white bg-red-400 m-2 p-2 rounded-md text-center"}>
         <p>{error}</p>
@@ -17,7 +16,6 @@ export const ErrorHandler = ({error, status_code, status_message}) => (
 export default function Dashboard() {
     // state
     const [error, setError] = useState(null);
-
     return (
         <AuthenticatedLayout
             header={

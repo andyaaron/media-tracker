@@ -1,8 +1,12 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
 import {Head} from "@inertiajs/react";
 import {CardList} from "@/Components/CardList.jsx";
+import UserContext from "@/context/UserContext.jsx";
+import {useContext} from "react";
 
 export default function Favourites() {
+    const { genres } = useContext(UserContext);
+
     return (
         <AuthenticatedLayout
             header={

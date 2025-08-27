@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -92,28 +93,40 @@ class MovieController extends Controller
         Log::debug("Initiating search!");
         // get query param from request
         $query = $request->query('query');
+        $account_id = $request->query('account_id');
 
         // check if param is missinng
         if (!$query) {
             return response()->json(['error' => 'Query parameters missing'], 400);
         }
 
-        $response = Http::withToken($this->api_token)
+        // initial response
+        $search_response = Http::withToken($this->api_token)
             ->get("$this->base_url/search/multi", [
             'query'     => $query,
         ]);
-
-        // check for success
-        if ($response->successful()) {
-            return $response->json();
-        } else {
-            // log error
+        if (!$search_response->successful()) {
             return response()->json([
-                'status_code'       => $response['status_code'],
-                'status_message'    => $response["status_message"],
+                'status_code'       => $search_response['status_code'],
+                'status_message'    => $search_response["status_message"],
                 'error'             => 'Failed to retrieve movies from TMDb'
-            ], $response->status());
+            ], $search_response->status());
         }
+
+        $search_results = $search_response->json('results');
+
+        // we need to manipulate the response to check if the user has favourited the movie
+        $favourites = $this->getFavouritesForAccount($account_id);
+        $favourite_ids = collect($favourites)->pluck('id');
+
+        // loop thorugh search results, add `is_favourited` key
+        $modified_results = $this->appendFavouriteStatus($search_results, $favourite_ids);
+
+        Log::debug("modified results:", $modified_results);
+
+        return response()->json([
+            'results' => $modified_results
+        ]);
     }
 
     // read from the database GET /my-list
@@ -181,12 +194,37 @@ class MovieController extends Controller
             ->get("$this->base_url/account/$account_id/favorite/movies");
 
         if ($response->successful()) {
-            return $response->json();
+            $favourite_movies = $response->json('results');
+
+            $favourite_ids = collect($favourite_movies)->pluck('id');
+
+            // append `is_favourited` key
+            $modified_favourites = $this->appendFavouriteStatus($favourite_movies, $favourite_ids);
+            Log::debug("modified favs: ", $modified_favourites);
+            return response()->json([
+                'results' => $modified_favourites,
+            ]);
         } else {
             return response()->json([
                 'status_code'       => $response['status_code'],
                 'status_message'    => $response["status_message"],
                 'error'             => 'Failed to get favorite movies!'
+            ]);
+        }
+    }
+
+    // get list of movie genres
+    public function genres(Request $request) {
+        $response = Http::withToken($this->api_token)
+            ->get("$this->base_url/genre/movie/list?language=en");
+
+        if ($response->successful()) {
+            return $response->json();
+        } else {
+            return response()->json([
+                'status_code'       => $response['status_code'],
+                'status_message'    => $response["status_message"],
+                'error'             => 'Failed to get genres list!'
             ]);
         }
     }
@@ -204,5 +242,25 @@ class MovieController extends Controller
     // delete records
     public function destroy() {
 
+    }
+
+    // raw data response for favorite movies (used with search method)
+    private function getFavouritesForAccount($account_id) {
+        $response = Http::withToken($this->api_token)
+            ->get("$this->base_url/account/$account_id/favorite/movies");
+
+        if ($response->successful()) {
+            return $response->json('results');
+        } else {
+            log::error("Failed to retrieve favorites for account ID: $account_id",  ['response' => $response->json()]);
+            return [];
+        }
+    }
+
+    private function appendFavouriteStatus(array $media, Collection $favouriteIds): array {
+        return collect($media)->map(function ($item) use ($favouriteIds) {
+            $item['is_favourited'] = $favouriteIds->contains($item['id']);
+            return $item;
+        })->all();
     }
 }

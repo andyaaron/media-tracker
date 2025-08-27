@@ -7,19 +7,19 @@ import {useContext, useEffect, useState} from "react";
 import {usePage} from "@inertiajs/react";
 
 export const CardList = ({renderFavourites = false}) => {
-    const [mediaList, setMediaList] = useState([]);
-
     const {
         handleFavourite,
         favourites,
-        setFavourites,
+        handleSetFavourites,
+        mediaList,
+        setMediaList
     } = useContext(UserContext);
     const { tmdb_account_id } = usePage().props.auth.user;
 
     useEffect(() => {
         const fetchFavourites = async () => {
             const results = await getFavourites(tmdb_account_id, favourites);
-            setFavourites(results)
+            handleSetFavourites(results)
         }
         fetchFavourites();
     }, []);
@@ -28,8 +28,6 @@ export const CardList = ({renderFavourites = false}) => {
     useEffect(() => {
         renderFavourites && setMediaList(favourites);
     }, [renderFavourites, favourites]);
-
-
 
     return (
         <div className={"search-results flex flex-col"}>

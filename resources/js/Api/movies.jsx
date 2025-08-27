@@ -37,7 +37,7 @@ export const getFavourites = async (tmdb_account_id, favourites) => {
             .then(response => response.json())
 
         if (response.results) {
-            return hasUserLikedMedia(response.results, favourites)
+            return response.results
         }
     } catch (error) {
         console.error("Error getting favourite movies: ", error);
@@ -45,30 +45,32 @@ export const getFavourites = async (tmdb_account_id, favourites) => {
     }
 }
 
-export const search = async (query, favourites) => {
-
+export const getGenres = async () => {
     try {
-        const response = await fetch('/api/search/multi?' + new URLSearchParams({ query: query }))
+        const response = await fetch('/api/genres')
             .then(response => response.json())
+
         if (response.results) {
-            // add an is_favourited bool to check if media is already liked.
-            return hasUserLikedMedia(response.results, favourites)
+            return response.results
         }
+    } catch (error) {
+        console.error("Error getting movie genres: ", error)
+        return error;
+    }
+}
+
+export const search = async (query, favourites, tmdb_account_id) => {
+    const searchParams = new URLSearchParams({
+        account_id: tmdb_account_id,
+        query: query
+    })
+    try {
+        const response = await fetch(`/api/search/multi?${searchParams}`)
+            .then(response => response.json())
+
+        return response.results
     } catch (error) {
         console.error("Error fetching media:", error);
         return [];
     }
-}
-
-const hasUserLikedMedia = (list, favourites) => {
-    const favouriteIds = new Set(favourites.map(item => item.id));
-
-    return list.map(mediaItem => {
-        const isFavourited = favouriteIds.has(mediaItem.id);
-
-        return {
-            ...mediaItem,
-            is_favourited: isFavourited
-        }
-    })
 }

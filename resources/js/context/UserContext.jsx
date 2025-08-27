@@ -1,17 +1,25 @@
-import {createContext, useState} from "react";
-import {favourite, search} from "@/Api/movies.jsx";
+import {createContext, useEffect, useState} from "react";
+import {favourite, getGenres} from "@/Api/movies.jsx";
 
 const UserContext = createContext({});
 
 const UserProvider = (props) => {
-    const [favourites, setFavourites] = useState([])
+    const [favourites, setFavourites] = useState([]);
+    const [mediaList, setMediaList] = useState([]);
+    const [genres, setGenres] = useState([]);
 
     const { tmdb_account_id } = props
 
+    useEffect(() => {
+        const fetchGenres = async () => {
+            const results = await getGenres();
+            setGenres(results)
+        }
+        fetchGenres();
+        }, []);
+
     const handleFavourite = async (media) => {
-        console.log("test test testtttt")
         const data = await favourite(media, tmdb_account_id)
-        console.log("data: ", data);
         setFavourites(prevFavourites => [...prevFavourites, data]);
     }
 
@@ -19,13 +27,15 @@ const UserProvider = (props) => {
         setFavourites(value)
     }
 
-
     return <UserContext.Provider {...props} value={{
         tmdb_account_id,
         handleFavourite,
         handleSetFavourites,
         favourites,
         setFavourites,
+        genres,
+        mediaList,
+        setMediaList,
     }} />
 }
 
