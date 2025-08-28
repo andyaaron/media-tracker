@@ -24,9 +24,9 @@ export const Search = (props) => {
     }
     return (
         <div className={"flex flex-row justify-center items-center"}>
-            <form onSubmit={onFormSubmit}>
-                <input className="m-4" type={"text"} placeholder={"Search for a movie... "} onChange={handleChange}/>
-                <button className={"border p-1 rounded-lg bg-blue-500 text-white font-bold"} onClick={handleClick} type={"submit"}>Submit</button>
+            <form className={"w-full flex flex-row items-center m-4 gap-4"} onSubmit={onFormSubmit}>
+                <input className="flex-1" type={"text"} placeholder={"Search for a movie... "} onChange={handleChange}/>
+                <button className={" border p-1 rounded-lg bg-blue-500 text-white font-bold"} onClick={handleClick} type={"submit"}>Submit</button>
             </form>
         </div>
     )
