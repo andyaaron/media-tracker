@@ -187,6 +187,7 @@ class MovieController extends Controller
         }
     }
 
+    // get favourites movies
     public function favourite_movies(Request $request) {
         $account_id = $request->query('account_id');
 
@@ -219,6 +220,7 @@ class MovieController extends Controller
             ->get("$this->base_url/genre/movie/list?language=en");
 
         if ($response->successful()) {
+            Log::debug($response->json());
             return $response->json();
         } else {
             return response()->json([

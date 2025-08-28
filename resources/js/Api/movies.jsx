@@ -49,9 +49,8 @@ export const getGenres = async () => {
     try {
         const response = await fetch('/api/genres')
             .then(response => response.json())
-
-        if (response.results) {
-            return response.results
+        if (response.genres) {
+            return response.genres
         }
     } catch (error) {
         console.error("Error getting movie genres: ", error)

@@ -12,7 +12,8 @@ export const CardList = ({renderFavourites = false}) => {
         favourites,
         handleSetFavourites,
         mediaList,
-        setMediaList
+        setMediaList,
+        genres,
     } = useContext(UserContext);
     const { tmdb_account_id } = usePage().props.auth.user;
 
@@ -29,16 +30,22 @@ export const CardList = ({renderFavourites = false}) => {
         renderFavourites && setMediaList(favourites);
     }, [renderFavourites, favourites]);
 
+    const moviesWithGenres = mediaList.map(movie => {
+        const idToGenre = movie.genre_ids.map(id => genres.get(id));
+        return { ...movie, genres: idToGenre };
+    })
+
     return (
         <div className={"search-results flex flex-col"}>
-            {mediaList?.length > 1 && (
-                mediaList.map(media => (
+            {moviesWithGenres?.length > 1 && (
+                moviesWithGenres.map(media => (
                     <div key={media.id} className={"media-card border rounded-lg flex flex-row gap-5 p-8 m-4"}>
                         <img alt="media poster" className={"w-32 h-48"}
                              src={media.poster_path ? `https://image.tmdb.org/t/p/w500${media.poster_path}` : "/images/placeholder.svg"}/>
                         <div className={"basis-2/3"}>
                             <h2>{media["title"]}</h2>
                             <h3>{media.release_date}</h3>
+                            <h3>{media.genres.map(String).join(', ')}</h3>
                             <p>{media.overview}</p>
                             <div className={"interact flex"}>
                                 <a onClick={() => handleFavourite(media)} href={"#"}>

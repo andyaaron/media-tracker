@@ -6,14 +6,16 @@ const UserContext = createContext({});
 const UserProvider = (props) => {
     const [favourites, setFavourites] = useState([]);
     const [mediaList, setMediaList] = useState([]);
-    const [genres, setGenres] = useState([]);
+    const [genres, setGenres] = useState(null);
 
     const { tmdb_account_id } = props
 
     useEffect(() => {
         const fetchGenres = async () => {
             const results = await getGenres();
-            setGenres(results)
+            // convert array of objects to a map for faster searching
+            const genreMap = new Map(results.map((genre) => [genre.id, genre.name]));
+            setGenres(genreMap);
         }
         fetchGenres();
         }, []);
