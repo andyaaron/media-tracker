@@ -31,8 +31,11 @@ export const CardList = ({renderFavourites = false}) => {
     }, [renderFavourites, favourites]);
 
     const moviesWithGenres = mediaList.map(movie => {
-        const idToGenre = movie.genre_ids.map(id => genres.get(id));
-        return { ...movie, genres: idToGenre };
+        if(genres?.size > 0) {
+            const idToGenre = movie.genre_ids?.map(id => genres.get(id));
+            return {...movie, genres: idToGenre};
+        }
+        return {...movie}
     })
 
     return (
@@ -45,7 +48,7 @@ export const CardList = ({renderFavourites = false}) => {
                         <div className={"basis-2/3"}>
                             <h2>{media["title"]}</h2>
                             <h3>{media.release_date}</h3>
-                            <h3>{media.genres.map(String).join(', ')}</h3>
+                            <h3>{media.genres?.map(String).join(', ')}</h3>
                             <p>{media.overview}</p>
                             <div className={"interact flex"}>
                                 <a onClick={() => handleFavourite(media)} href={"#"}>
