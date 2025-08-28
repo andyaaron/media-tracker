@@ -35,7 +35,7 @@ export const CardList = ({renderFavourites = false}) => {
                 mediaList.map(media => (
                     <div key={media.id} className={"media-card border rounded-lg flex flex-row gap-5 p-8 m-4"}>
                         <img alt="media poster" className={"w-32 h-48"}
-                             src={`https://image.tmdb.org/t/p/w500/${media.poster_path}`}/>
+                             src={media.poster_path ? `https://image.tmdb.org/t/p/w500${media.poster_path}` : "/images/placeholder.svg"}/>
                         <div className={"basis-2/3"}>
                             <h2>{media["title"]}</h2>
                             <h3>{media.release_date}</h3>
