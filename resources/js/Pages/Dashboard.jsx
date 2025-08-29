@@ -1,10 +1,12 @@
-import {useState} from "react";
+import { useState} from "react";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import {Head, usePage} from '@inertiajs/react';
 import {useCustomJiti} from "tailwindcss/src/lib/load-config.js";
 import {CardList} from "@/Components/CardList.jsx";
 import {Search} from "@/Components/Search.jsx";
+import {GraphContainer} from "@/Components/Graphs/GraphContainer.jsx";
 import ForceGraph from "@/Components/Graphs/ForceGraph.jsx";
+import PieGraph from "@/Components/Graphs/PieGraph.jsx";
 
 export const ErrorHandler = ({error, status_code, status_message}) => (
     <div className={"error-container text-white bg-red-400 m-2 p-2 rounded-md text-center"}>
@@ -17,6 +19,7 @@ export const ErrorHandler = ({error, status_code, status_message}) => (
 export default function Dashboard() {
     // state
     const [error, setError] = useState(null);
+
     return (
         <AuthenticatedLayout
             header={
@@ -34,7 +37,14 @@ export default function Dashboard() {
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <Search />
                         <CardList renderFavourites={false} />
-                        <ForceGraph />
+                        <div className="flex flex-row">
+                            <GraphContainer title={"Favourited movies by genre"}>
+                                <ForceGraph />
+                            </GraphContainer>
+                            <GraphContainer title={"Genre Breakdown"}>
+                                <PieGraph />
+                            </GraphContainer>
+                        </div>
                     </div>
                 </div>
             </div>

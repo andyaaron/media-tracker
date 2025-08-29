@@ -8,53 +8,73 @@ const ForceGraph = () => {
     const {
         genres,
         favourites,
-        handleSetFavourites,
     } = useContext(UserContext);
 
-    const { tmdb_account_id } = usePage().props.auth.user;
     const svgRef = useRef();
+    const width = "928";
+    const height = "680";
 
     useEffect(() => {
-        const fetchFavourites = async () => {
-            const results = await getFavourites(tmdb_account_id, favourites);
-            handleSetFavourites(results)
+        return () => {
+            if (d3.select(svgRef.current).node()) {
+                const simulation = d3.select(svgRef.current).datum()?.simulation;
+                if (simulation) {
+                    simulation.stop();
+                }
+            }
         }
-        fetchFavourites();
     }, []);
 
-    console.log("genres: ", genres);
-    console.log("favourites: ", favourites);
-
-    // Specify the dimensions of the chart.
-    const width = 928;
-    const height = 680;
-
-    // Create the SVG container.
-    const svg = d3.select(svgRef.current)
-        .append("svg")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("viewBox", [-width / 2, -height / 2, width, height])
-        .attr("style", "max-width: 100%; height: auto;");
-
-    if (genres && favourites) {
-        const data = {
-            links: favourites,
-            nodes: Array.from(genres),
+    useEffect(() => {
+        if (!favourites || favourites.length == 0 || !genres || genres.size === 0) {
+            return;
         }
+
+        // Create the SVG container.
+        const svg = d3.select(svgRef.current)
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .attr("viewBox", "0 0 928 680")
+            // .attr("style", "max-width: 100%; height: 1;");
+
+        // clear previous graph
+        svg.selectAll('*').remove();
+
+        const nodes = [];
+        const links = [];
+
+        // add genre nodes
+        for (let [id, name] of genres) {
+            nodes.push({ id: `genre-${id}`, name: name, group: 'genre'});
+        }
+
+        // add movie nodes and links
+        favourites.forEach(movie => {
+            // add movie node
+            nodes.push({ id: `movie-${movie.id}`, name: movie.original_title, group: 'movie'})
+
+            // add links between the movie and its genres
+            if (movie.genre_ids) {
+                movie.genre_ids.forEach(genreId => {
+                    if (genres.has(genreId)) {
+                        links.push({
+                            source: `movie-${movie.id}`,
+                            target: `genre-${genreId}`
+                        })
+                    }
+                })
+            }
+        })
 
         // Specify the color scale.
         const color = d3.scaleOrdinal(d3.schemeCategory10);
-
-        // The force simulation mutates links and nodes, so create a copy
-        // so that re-evaluating this cell produces the same result.
-        const links = data.links.map(d => ({...d}));
-        const nodes = data.nodes.map(d => ({...d}));
 
         // Create a simulation with several forces.
         const simulation = d3.forceSimulation(nodes)
             .force("link", d3.forceLink(links).id(d => d.id))
             .force("charge", d3.forceManyBody())
+            .force("center", d3.forceCenter(300, 200))
             .force("x", d3.forceX())
             .force("y", d3.forceY());
 
@@ -77,6 +97,34 @@ const ForceGraph = () => {
             .attr("r", 5)
             .attr("fill", d => color(d.group));
 
+        const labels = svg.append("g")
+            .attr("pointer-events", "none")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", 10)
+            .selectAll("text")
+            .data(nodes)
+            .join("text")
+            .attr("id", d => `label-${d.id}`) // Give each label a unique ID
+            .attr("dx", 15)
+            .attr("dy", 4)
+            .text(d => d.name)
+            .style("opacity", 0)
+
+        node.on("mouseover", (event, d) => {
+            // hide label when mouse moves out
+            d3.select(`#label-${d.id}`)
+                .transition()
+                .duration(200)
+                .style("opacity", 1)
+        }).on("mouseout", (event, d) => {
+            // hide label when mouse moves out
+            d3.select(`#label-${d.id}`)
+                .transition()
+                .duration(200)
+                .style("opacity", 0)
+        })
+
+
         node.append("title")
             .text(d => d.id);
 
@@ -97,6 +145,10 @@ const ForceGraph = () => {
             node
                 .attr("cx", d => d.x)
                 .attr("cy", d => d.y);
+
+            labels
+                .attr("x", d => d.x)
+                .attr("y", d => d.y)
         });
 
         // Reheat the simulation when drag starts, and fix the subject position.
@@ -120,15 +172,11 @@ const ForceGraph = () => {
             event.subject.fy = null;
         }
 
-        // When this cell is re-run, stop the previous simulation. (This doesn’t
-        // really matter since the target alpha is zero and the simulation will
-        // stop naturally, but it’s a good practice.)
-        // invalidation.then(() => simulation.stop());
+        return () => simulation.stop();
 
-        return (
-            <div id={"svg"} ref={svgRef}></div>
-        );
-    }
+    }, [favourites, genres]);
+
+    return <svg ref={svgRef} width={width} height={height}></svg>
 }
 
 export default ForceGraph;

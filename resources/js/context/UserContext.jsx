@@ -21,8 +21,15 @@ const UserProvider = (props) => {
         }, []);
 
     const handleFavourite = async (media) => {
-        const data = await favourite(media, tmdb_account_id)
-        setFavourites(prevFavourites => [...prevFavourites, data]);
+        const isFavourited = favourites.some(fav => fav.id === media.id)
+
+        if (isFavourited) {
+            setFavourites(prevFavourites => prevFavourites.filter(fav => fav.id !== media.id))
+            // @TODO: make api call to remove favourite from db
+        } else {
+            const data = await favourite(media, tmdb_account_id)
+            setFavourites(prevFavourites => [...prevFavourites, data]);
+        }
     }
 
     const handleSetFavourites = (value) => {
