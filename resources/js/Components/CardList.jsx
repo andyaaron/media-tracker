@@ -6,7 +6,7 @@ import UserContext from "@/context/UserContext.jsx";
 import {useContext, useEffect, useState} from "react";
 import {usePage} from "@inertiajs/react";
 
-export const CardList = ({renderFavourites = false}) => {
+export const CardList = ({renderFavourites = false, results}) => {
     const {
         handleFavourite,
         favourites,
@@ -25,12 +25,16 @@ export const CardList = ({renderFavourites = false}) => {
         fetchFavourites();
     }, []);
 
+    useEffect(() => {
+        if (results) setMediaList(results)
+    }, [results])
+
 
     useEffect(() => {
         renderFavourites && setMediaList(favourites);
     }, [renderFavourites, favourites]);
 
-    const moviesWithGenres = mediaList.map(movie => {
+    const moviesWithGenres = mediaList?.map(movie => {
         if(genres?.size > 0) {
             const idToGenre = movie.genre_ids?.map(id => genres.get(id));
             return {...movie, genres: idToGenre};
