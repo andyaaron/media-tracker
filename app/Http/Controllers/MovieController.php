@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -124,7 +125,7 @@ class MovieController extends Controller
 
         Log::debug("modified results:", $modified_results);
 
-        return response()->json([
+        return Inertia::render('Search', [
             'results' => $modified_results
         ]);
     }
@@ -196,12 +197,12 @@ class MovieController extends Controller
 
         if ($response->successful()) {
             $favourite_movies = $response->json('results');
-
+            $results = $response->json();
+            Log::debug("results:", $results['results']);
             $favourite_ids = collect($favourite_movies)->pluck('id');
 
             // append `is_favourited` key
             $modified_favourites = $this->appendFavouriteStatus($favourite_movies, $favourite_ids);
-            Log::debug("modified favs: ", $modified_favourites);
             return response()->json([
                 'results' => $modified_favourites,
             ]);
@@ -220,7 +221,6 @@ class MovieController extends Controller
             ->get("$this->base_url/genre/movie/list?language=en");
 
         if ($response->successful()) {
-            Log::debug($response->json());
             return $response->json();
         } else {
             return response()->json([

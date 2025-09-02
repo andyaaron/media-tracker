@@ -1,8 +1,9 @@
 import {useContext, useState} from "react";
 import userContext from "@/context/UserContext.jsx";
 import {search} from "@/Api/movies.jsx";
-import {usePage} from "@inertiajs/react";
-export const Search = (props) => {
+import { usePage, router } from "@inertiajs/react";
+
+export const SearchBar = (props) => {
     const [query, setQuery] = useState('');
 
     const {
@@ -16,17 +17,28 @@ export const Search = (props) => {
 
     const onFormSubmit = e => {
         e.preventDefault();
+
+        router.get('search', { query: query }, {
+            preserveState: true,
+            preserverScroll: true,
+        });
     }
 
-    const handleClick = async () => {
-        const searchResults = await search(query, favourites, tmdb_account_id)
-        setMediaList(searchResults)
-    }
     return (
         <div className={"flex flex-row justify-center items-center"}>
             <form className={"w-full flex flex-row items-center m-4 gap-4"} onSubmit={onFormSubmit}>
-                <input className="flex-1" type={"text"} placeholder={"Search for a movie... "} onChange={handleChange}/>
-                <button className={" border p-1 rounded-lg bg-blue-500 text-white font-bold"} onClick={handleClick} type={"submit"}>Submit</button>
+                <input
+                    className="flex-1"
+                    type={"text"}
+                    placeholder={"SearchBar for a movie... "}
+                    onChange={handleChange}
+                />
+                <button
+                    className={" border p-1 rounded-lg bg-blue-500 text-white font-bold"}
+                    type={"submit"}
+                >
+                    Submit
+                </button>
             </form>
         </div>
     )
