@@ -1,3 +1,5 @@
+import { Link } from '@inertiajs/react';
+
 // Helper function to handle page navigation via Inertia
 const handlePageChange = (newPage) => {
     router.visit(route('favourites', { page: newPage }), {
@@ -6,13 +8,13 @@ const handlePageChange = (newPage) => {
     });
 };
 
-const Pagination = ({ page, total_pages }) => {
-    if (total_pages <= 1) {
+const Pagination = ({ page, totalPages }) => {
+    if (totalPages <= 1) {
         return null;
     }
 
     const pages = [];
-    for (let i = 1; i <= total_pages; i++) {
+    for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
     }
 
@@ -38,7 +40,7 @@ const Pagination = ({ page, total_pages }) => {
                     {p}
                 </Link>
             ))}
-            {page < total_pages && (
+            {page < totalPages && (
                 <button
                     onClick={() => handlePageChange(page + 1)}
                     className="px-4 py-2 text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 transition-colors"

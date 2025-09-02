@@ -5,8 +5,9 @@ import {getFavourites} from "@/Api/movies.jsx";
 import UserContext from "@/context/UserContext.jsx";
 import {useContext, useEffect, useState} from "react";
 import {usePage} from "@inertiajs/react";
+import Pagination from "@/Components/Pagination.jsx";
 
-export const CardList = ({renderFavourites = false, results}) => {
+export const CardList = ({renderFavourites = false, results, page, totalPages}) => {
     const {
         handleFavourite,
         favourites,
@@ -71,6 +72,7 @@ export const CardList = ({renderFavourites = false, results}) => {
                     )
                 })
             )}
+            <Pagination page={page} totalPages={totalPages}/>
         </div>
     )
 }

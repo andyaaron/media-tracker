@@ -191,9 +191,10 @@ class MovieController extends Controller
     // get favourites movies
     public function favourite_movies(Request $request) {
         $tmdb_account_id = auth()->user()->tmdb_account_id;
+        $page = $request->query('page') ?: 1;
 
         $response = Http::withToken($this->api_token)
-            ->get("$this->base_url/account/$tmdb_account_id/favorite/movies");
+            ->get("$this->base_url/account/$tmdb_account_id/favorite/movies?page=$page");
 
         if ($response->successful()) {
             $favourite_movies = $response->json('results');

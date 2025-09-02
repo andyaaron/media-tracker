@@ -47,7 +47,7 @@ export default function Favourites({ results, page, total_pages, total_results, 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <CardList renderFavourites={true} results={results} />
+                        <CardList results={results} page={page} totalPages={total_pages} />
                     </div>
                 </div>
             </div>
