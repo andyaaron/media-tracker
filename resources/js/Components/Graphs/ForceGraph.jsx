@@ -8,11 +8,14 @@ const ForceGraph = () => {
     const {
         genres,
         favourites,
+        handleSetFavourites,
     } = useContext(UserContext);
 
+    const { tmdb_account_id } = usePage().props.auth.user;
+
     const svgRef = useRef();
-    const width = "928";
-    const height = "680";
+    const width = "464";
+    const height = "340";
 
     useEffect(() => {
         return () => {
@@ -26,6 +29,14 @@ const ForceGraph = () => {
     }, []);
 
     useEffect(() => {
+        const fetchFavourites = async () => {
+            const results = await getFavourites(tmdb_account_id, favourites);
+            handleSetFavourites(results)
+        }
+        fetchFavourites();
+    }, []);
+
+    useEffect(() => {
         if (!favourites || favourites.length == 0 || !genres || genres.size === 0) {
             return;
         }
@@ -35,7 +46,7 @@ const ForceGraph = () => {
             .append("svg")
             .attr("width", width)
             .attr("height", height)
-            .attr("viewBox", "0 0 928 680")
+            .attr("viewBox", "0 0 464 340")
             // .attr("style", "max-width: 100%; height: 1;");
 
         // clear previous graph

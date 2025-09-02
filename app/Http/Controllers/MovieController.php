@@ -190,6 +190,35 @@ class MovieController extends Controller
 
     // get favourites movies
     public function favourite_movies(Request $request) {
+        $tmdb_account_id = auth()->user()->tmdb_account_id;
+
+        $response = Http::withToken($this->api_token)
+            ->get("$this->base_url/account/$tmdb_account_id/favorite/movies");
+
+        if ($response->successful()) {
+            $favourite_movies = $response->json('results');
+            $data = $response->json();
+
+            $favourite_ids = collect($favourite_movies)->pluck('id');
+
+            // append `is_favourited` key
+            $modified_favourites = $this->appendFavouriteStatus($favourite_movies, $favourite_ids);
+            return Inertia::render('Favourites', [
+                'results'       => $modified_favourites,
+                'page'          => $data['page'],
+                'total_pages'   => $data['total_pages'],
+                'total_results' => $data['total_results'],
+            ]);
+        } else {
+            return Inertia::render('Favourites', [
+                'status_code'       => $response['status_code'],
+                'status_message'    => $response["status_message"],
+                'error'             => 'Failed to get favorite movies!'
+            ]);
+        }
+    }
+
+    public function get_favourite_movies_api(Request $request) {
         $account_id = $request->query('account_id');
 
         $response = Http::withToken($this->api_token)
@@ -197,14 +226,18 @@ class MovieController extends Controller
 
         if ($response->successful()) {
             $favourite_movies = $response->json('results');
-            $results = $response->json();
-            Log::debug("results:", $results['results']);
+            $data = $response->json();
+
+            Log::debug("results:", $data['results']);
             $favourite_ids = collect($favourite_movies)->pluck('id');
 
             // append `is_favourited` key
             $modified_favourites = $this->appendFavouriteStatus($favourite_movies, $favourite_ids);
             return response()->json([
-                'results' => $modified_favourites,
+                'results'       => $modified_favourites,
+                'page'          => $data['page'],
+                'total_pages'   => $data['total_pages'],
+                'total_results' => $data['total_results'],
             ]);
         } else {
             return response()->json([

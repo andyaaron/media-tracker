@@ -6,9 +6,9 @@ import {getFavourites} from "@/Api/movies.jsx";
 
 export const GraphContainer = ({ title, children }) => {
     return (
-        <div className={"m-4"}>
+        <div className={"m-4 "}>
             <h2>{title}</h2>
-            <div className={"border border-solid border-2 rounded-md w-100 min-h-full"}>
+            <div className={"w-100 border border-solid border-2 rounded-md overflow-hidden"}>
                 {children}
             </div>
         </div>
