@@ -5,6 +5,7 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage } from '@inertiajs/react';
 import { useState} from 'react'
 import {UserProvider} from "/resources/js/context/UserContext";
+import {SearchBar} from "@/Components/SearchBar.jsx";
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
@@ -186,8 +187,9 @@ export default function AuthenticatedLayout({ header, children }) {
 
                 {header && (
                     <header className="bg-white shadow">
-                        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                        <div className="flex flex-row justify-between items-center mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                             {header}
+                            <SearchBar />
                         </div>
                     </header>
                 )}
