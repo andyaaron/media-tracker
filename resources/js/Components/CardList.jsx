@@ -52,7 +52,7 @@ export const CardList = ({renderFavourites = false, results, page, totalPages}) 
                         <div key={media.id} className={"media-card border rounded-lg flex flex-row gap-5 p-8 m-4"}>
                             <img alt="media poster" className={"w-32 h-48"}
                                  src={media.poster_path ? `https://image.tmdb.org/t/p/w500${media.poster_path}` : "/images/placeholder.svg"}/>
-                            <div className={"basis-2/3"}>
+                            <div className={"flex-1"}>
                                 <h2>{media.title || media.name}</h2>
                                 <h3>{media.release_date}</h3>
                                 <h3>{media.genres?.map(String).join(', ')}</h3>
