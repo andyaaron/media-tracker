@@ -30,7 +30,7 @@ export const SearchBar = (props) => {
                 <input
                     className="flex-1"
                     type={"text"}
-                    placeholder={"SearchBar for a movie... "}
+                    placeholder={"Search for a movie... "}
                     onChange={handleChange}
                 />
                 <button
