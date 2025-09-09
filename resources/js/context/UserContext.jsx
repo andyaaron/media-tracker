@@ -7,7 +7,7 @@ const UserProvider = (props) => {
     const [favourites, setFavourites] = useState([]);
     const [mediaList, setMediaList] = useState([]);
     const [genres, setGenres] = useState(null);
-
+    const [query, setQuery] = useState('');
     const { tmdb_account_id } = props
 
     useEffect(() => {
@@ -45,6 +45,8 @@ const UserProvider = (props) => {
         genres,
         mediaList,
         setMediaList,
+        query,
+        setQuery
     }} />
 }
 

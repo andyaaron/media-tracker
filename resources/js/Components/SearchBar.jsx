@@ -4,11 +4,11 @@ import {search} from "@/Api/movies.jsx";
 import { usePage, router } from "@inertiajs/react";
 
 export const SearchBar = (props) => {
-    const [query, setQuery] = useState('');
-
     const {
         favourites,
         setMediaList,
+        query,
+        setQuery
     } = useContext(userContext)
     const { tmdb_account_id } = usePage().props.auth.user;
     const handleChange = (e) => {

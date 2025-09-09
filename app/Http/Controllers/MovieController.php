@@ -94,6 +94,7 @@ class MovieController extends Controller
         Log::debug("Initiating search!");
         // get query param from request
         $query = $request->query('query');
+        $page = $request->query('page') ?? 1;
         $account_id = $request->query('account_id');
 
         // check if param is missinng
@@ -105,6 +106,7 @@ class MovieController extends Controller
         $search_response = Http::withToken($this->api_token)
             ->get("$this->base_url/search/multi", [
             'query'     => $query,
+            'page'      => $page,
         ]);
         if (!$search_response->successful()) {
             return response()->json([
