@@ -4,7 +4,11 @@ import UserContext from "@/context/UserContext.jsx";
 
 // Helper function to handle page navigation via Inertia
 const handlePageChange = (newPage, query) => {
-    router.get('search', {query: query, page: newPage }, {
+    const data = {
+        ...(query && {query: query}),
+        page: newPage
+    }
+    router.get(route().current(), data, {
         preserveState: true,
         preserveScroll: true,
     });
