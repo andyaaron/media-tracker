@@ -13,7 +13,7 @@ export const ErrorHandler = ({error, status_code, status_message}) => (
     </div>
 )
 
-const Search = ({ results }) => {
+const Search = ({ results, page, total_pages, total_results, status_code, status_message }) => {
     // state
     const [error, setError] = useState(null);
 
@@ -37,6 +37,10 @@ const Search = ({ results }) => {
         )
     }
 
+    if (error) {
+        return <ErrorHandler {...error} />
+    }
+
     return (
         <AuthenticatedLayout
             header={
@@ -49,9 +53,8 @@ const Search = ({ results }) => {
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    {error && <ErrorHandler {...error} />}
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <CardList renderFavourites={false} results={results} />
+                        <CardList renderFavourites={false} results={results} page={page} totalPages={total_pages} />
                     </div>
                 </div>
             </div>

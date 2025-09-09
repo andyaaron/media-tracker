@@ -1,18 +1,11 @@
 import { useState} from "react";
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import {Head} from '@inertiajs/react';
 import {useCustomJiti} from "tailwindcss/src/lib/load-config.js";
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import {ErrorHandler} from "@/Components/ErrorHandler.jsx";
 import {GraphContainer} from "@/Components/Graphs/GraphContainer.jsx";
 import ForceGraph from "@/Components/Graphs/ForceGraph.jsx";
 import PieGraph from "@/Components/Graphs/PieGraph.jsx";
-
-export const ErrorHandler = ({error, status_code, status_message}) => (
-    <div className={"error-container text-white bg-red-400 m-2 p-2 rounded-md text-center"}>
-        <p>{error}</p>
-        <p>status code: {status_code}</p>
-        <p>status message: {status_message}</p>
-    </div>
-)
 
 export default function Dashboard() {
     // state

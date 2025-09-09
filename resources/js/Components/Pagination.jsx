@@ -14,12 +14,17 @@ const Pagination = ({ page, totalPages }) => {
     }
 
     const pages = [];
+    let currentPages = [];
     for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
     }
 
+    if (pages.length > 10) {
+       currentPages = pages.slice(page-1, page+10)
+    }
+
     return (
-        <div className="flex justify-center mt-8 space-x-2">
+        <div className="flex justify-center mt-8 space-x-2 m-4">
             {page > 1 && (
                 <button
                     onClick={() => handlePageChange(page - 1)}
@@ -28,7 +33,7 @@ const Pagination = ({ page, totalPages }) => {
                     Previous
                 </button>
             )}
-            {pages.map((p) => (
+            {currentPages.map((p) => (
                 <Link
                     key={p}
                     href={route('favourites', { page: p })}

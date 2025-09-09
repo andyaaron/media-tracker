@@ -113,7 +113,7 @@ class MovieController extends Controller
                 'error'             => 'Failed to retrieve movies from TMDb'
             ], $search_response->status());
         }
-
+        $data = $search_response->json();
         $search_results = $search_response->json('results');
 
         // we need to manipulate the response to check if the user has favourited the movie
@@ -126,7 +126,10 @@ class MovieController extends Controller
         Log::debug("modified results:", $modified_results);
 
         return Inertia::render('Search', [
-            'results' => $modified_results
+            'results' => $modified_results,
+            'page'          => $data['page'],
+            'total_pages'   => $data['total_pages'],
+            'total_results' => $data['total_results'],
         ]);
     }
 
